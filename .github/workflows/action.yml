@@ -18,6 +18,7 @@ jobs:
     env:
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_NAME: ${{ secrets.DB_NAME }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
     steps:
       - name: clone code
         uses: actions/checkout@v2
