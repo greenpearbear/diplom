@@ -37,7 +37,6 @@ jobs:
           target: "./docker/"
           strip_components: 1
       - name: docker-compose up
-        if: always()
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -46,5 +45,8 @@ jobs:
           script: |
             cd docker
             echo "${{ secrets.PASSWORD }}" | sudo -S docker-compose up -d
-            docker system prune -f
-            docker image prune -a -f
+      - name: clear images docker
+        if: always()
+        run: |
+          echo "${{ secrets.PASSWORD }}" | sudo -S docker system prune -f
+          echo "${{ secrets.PASSWORD }}" | sudo -S docker image prune -a -f
