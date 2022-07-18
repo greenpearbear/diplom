@@ -16,3 +16,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password_repeat']:
+            raise serializers.ValidationError('Пароль и ')
