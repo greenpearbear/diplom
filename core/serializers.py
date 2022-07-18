@@ -19,4 +19,5 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password_repeat']:
-            raise serializers.ValidationError('Пароль и ')
+            raise serializers.ValidationError('Пароль и повторите пароль не совпадают')
+        return attrs
