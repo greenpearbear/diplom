@@ -45,8 +45,3 @@ jobs:
           script: |
             cd docker
             echo "${{ secrets.PASSWORD }}" | sudo -S docker-compose up -d
-      - name: clear images docker
-        if: always()
-        run: |
-          echo "${{ secrets.PASSWORD }}" | sudo -S docker system prune -f
-          echo "${{ secrets.PASSWORD }}" | sudo -S docker image prune -a -f
