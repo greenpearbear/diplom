@@ -47,4 +47,4 @@ jobs:
             echo "${{ secrets.PASSWORD }}" | sudo -S docker-compose up -d
       - name: clear docker trash
         if: always()
-        run: echo "${{ secrets.PASSWORD }}" | sudo -S docker system prune -f
+        run: echo "${{ secrets.PASSWORD }}" | sudo -S docker system prune -f -a
