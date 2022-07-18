@@ -3,7 +3,6 @@ from .models import User
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(max_length=20, unique=True)
 
     class Meta:
         model = User
