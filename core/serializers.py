@@ -6,7 +6,20 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = "__all__"
+        fields = (
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "password",
+            "password_repeat",
+        )
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password_repeat']:
+            raise serializers.ValidationError('Пароль и повторите пароль не совпадают')
+        return attrs
 
     def create(self, validated_data):
         user = User.objects.create(**validated_data)
@@ -15,8 +28,3 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
-
-    def validate(self, attrs):
-        if attrs['password'] != attrs['password_repeat']:
-            raise serializers.ValidationError('Пароль и повторите пароль не совпадают')
-        return attrs
