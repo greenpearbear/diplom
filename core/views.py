@@ -2,11 +2,12 @@ from django.contrib.auth import login, logout
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import permissions
-from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveUpdateAPIView, UpdateAPIView
 from rest_framework.response import Response
 
 from core.models import User
-from core.serializers import UserRegistrationSerializer, UserLoginSerializer, UserSerializer
+from core.serializers import UserRegistrationSerializer, UserLoginSerializer, UserSerializer, \
+    UserUpdatePasswordSerializer
 
 
 class RegistryUserView(CreateAPIView):
@@ -48,3 +49,12 @@ class RetrieveUpdateUserView(RetrieveUpdateAPIView):
     def delete(self, request, *args, **kwargs):
         logout(request)
         return Response({})
+
+
+class UpdatePasswordUserView(UpdateAPIView):
+    model = User
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UserUpdatePasswordSerializer
+
+    def get_object(self):
+        return self.request.user
