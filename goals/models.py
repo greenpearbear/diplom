@@ -49,6 +49,6 @@ class Goal(DateModelMixin):
     title = models.CharField(verbose_name="Название", max_length=255)
     text = models.CharField(verbose_name='Описание', max_length=1023)
     status = models.CharField(max_length=9, default='execution', choices=STATUS)
-    priority = models.CharField()
-    date_deadline = models.DateField(max_length=8, choices=PRIORITY)
+    priority = models.CharField(max_length=8, choices=PRIORITY)
+    date_deadline = models.DateField()
 
