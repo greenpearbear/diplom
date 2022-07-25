@@ -30,6 +30,10 @@ class GoalCategory(DateModelMixin):
 
 class Goal(DateModelMixin):
 
+    class Meta:
+        verbose_name = "Цель"
+        verbose_name_plural = "Цели"
+
     STATUS = [
         ("1", "К выполнению"),
         ("2", "В работе"),
@@ -52,3 +56,13 @@ class Goal(DateModelMixin):
     priority = models.CharField(max_length=1, choices=PRIORITY, default='middle')
     due_date = models.DateField()
 
+
+class GoalComment(DateModelMixin):
+
+    class Meta:
+        verbose_name = "Комментарий"
+        verbose_name_plural = "Комментарии"
+
+    goal = models.ForeignKey(Goal, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField(verbose_name='Текст')
