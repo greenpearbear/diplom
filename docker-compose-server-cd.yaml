@@ -23,7 +23,10 @@ services:
         condition: service_healthy
     volumes:
       - .docker_env:/app/.env
-    command: python manage.py migrate
+    command: bash -c "
+      python manage.py makemigrations
+      && python manage.py migrate
+      "
   postgres:
     image: postgres:latest
     environment:

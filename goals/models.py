@@ -31,24 +31,24 @@ class GoalCategory(DateModelMixin):
 class Goal(DateModelMixin):
 
     STATUS = [
-        ("execution", "К выполнению"),
-        ("work", "В работе"),
-        ("performed", "Выполнено"),
-        ('archive', "Архив")
+        ("1", "К выполнению"),
+        ("2", "В работе"),
+        ("3", "Выполнено"),
+        ('4', "Архив")
     ]
 
     PRIORITY = [
-        ("low", "низкий"),
-        ("middle", "средний"),
-        ("high", "высокий"),
-        ('critical', "критический")
+        ("1", "Низкий"),
+        ("2", "Средний"),
+        ("3", "Высокий"),
+        ('4', "Критический")
     ]
 
     user = models.ForeignKey(User, verbose_name="Автор", on_delete=models.PROTECT)
     category = models.ForeignKey(GoalCategory, verbose_name='Категория', on_delete=models.PROTECT)
     title = models.CharField(verbose_name="Название", max_length=255)
-    text = models.CharField(verbose_name='Описание', max_length=1023)
-    status = models.CharField(max_length=9, default='execution', choices=STATUS)
-    priority = models.CharField(max_length=8, choices=PRIORITY)
-    date_deadline = models.DateField()
+    description = models.CharField(verbose_name='Описание', max_length=1023)
+    status = models.CharField(max_length=1, choices=STATUS, default='execution')
+    priority = models.CharField(max_length=1, choices=PRIORITY, default='middle')
+    due_date = models.DateField()
 

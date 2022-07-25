@@ -21,6 +21,7 @@ class GoalCategoryListView(ListAPIView):
     serializer_class = GoalCategoryListSerializer
     pagination_class = LimitOffsetPagination
     filter_backends = [filters.OrderingFilter, filters.SearchFilter]
+    filterset_fields = ["board", "user"]
     ordering_fields = ["title", "created"]
     ordering = ["title"]
     search_fields = ["title"]
@@ -61,7 +62,7 @@ class GoalListView(ListAPIView):
     search_fields = ["title", "text"]
 
     def get_queryset(self):
-        return Goal.objects.filter(user=self.request.user, is_deleted=False)
+        return Goal.objects.filter(user=self.request.user, category__is_deleted=False)
 
 
 class GoalView(RetrieveUpdateDestroyAPIView):
