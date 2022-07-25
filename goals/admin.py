@@ -18,5 +18,7 @@ class GoalCommentAdmin(admin.ModelAdmin):
     search_fields = ('goal', 'user', 'text')
 
 
-admin.site.register(GoalCategory, GoalCategoryAdmin, Goal, GoalAdmin, GoalComment, GoalCommentAdmin)
+admin.site.register(GoalCategory, GoalCategoryAdmin)
+admin.site.register(Goal, GoalAdmin)
+admin.site.register(GoalComment, GoalCommentAdmin)
 
