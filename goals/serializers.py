@@ -6,6 +6,15 @@ from core.serializers import UserSerializer
 from goals.models import GoalCategory, Goal, GoalComment, Board, BoardParticipant
 
 
+class GoalCategorySerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = GoalCategory
+        read_only_fields = ("id", "created", "updated", "user")
+        fields = "__all__"
+
+
 class GoalCategoryCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
@@ -14,14 +23,17 @@ class GoalCategoryCreateSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "created", "updated", "user")
         fields = "__all__"
 
-
-class GoalCategoryListSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-
-    class Meta:
-        model = GoalCategory
-        read_only_fields = ("id", "created", "updated", "user")
-        fields = "__all__"
+    def validate_board(self, value):
+        if value.is_deleted:
+            raise serializers.ValidationError("not allowed in deleted project")
+        allow = BoardParticipant.objects.filter(
+            board=value,
+            role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
+            user=self.context["request"].user,
+        ).exists()
+        if not allow:
+            raise serializers.ValidationError("must be owner or writer in project")
+        return value
 
 
 class GoalCreateSerializer(serializers.ModelSerializer):
@@ -120,8 +132,8 @@ class BoardSerializer(serializers.ModelSerializer):
                     old_participant.delete()
                 else:
                     if (
-                            old_participant.role
-                            != new_by_id[old_participant.user_id]["role"]
+                        old_participant.role
+                        != new_by_id[old_participant.user_id]["role"]
                     ):
                         old_participant.role = new_by_id[old_participant.user_id][
                             "role"
