@@ -1,5 +1,5 @@
 from django.db import transaction
-from rest_framework import permissions
+from rest_framework import permissions, filters
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.pagination import LimitOffsetPagination
 
@@ -35,7 +35,15 @@ class BoardView(RetrieveUpdateDestroyAPIView):
 
 class BoardListView(ListAPIView):
     model = Board
-    permission_classes = [permissions.IsAuthenticated, BoardPermissions]
-    serializer_class = BoardListSerializer
+    permission_classes = [permissions.IsAuthenticated]
     pagination_class = LimitOffsetPagination
-    ordering_fields = ['title']
+    serializer_class = BoardListSerializer
+    filter_backends = [
+        filters.OrderingFilter,
+    ]
+    ordering = ["title"]
+
+    def get_queryset(self):
+        return Board.objects.filter(
+            participants__user=self.request.user, is_deleted=False
+        )
