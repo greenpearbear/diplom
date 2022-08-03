@@ -50,6 +50,12 @@ class GoalCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Категория удалена")
         if value.user != self.context["request"].user:
             return serializers.ValidationError("Нет такой категории")
+        if not BoardParticipant.objects.filter(
+            board_id=value.board_id,
+            role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
+            user=self.context["request"].user,
+        ).exists():
+            raise serializers.ValidationError("must be owner or writer in project")
         return value
 
 
@@ -61,6 +67,14 @@ class GoalSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "created", "updated", "user")
         fields = "__all__"
 
+    def validate_category(self, value):
+        if value.is_deleted:
+            raise serializers.ValidationError("not allowed in deleted category")
+
+        if self.instance.category.board_id != value.board_id:
+            raise serializers.ValidationError("transfer between projects not allowed")
+        return value
+
 
 class CommentsCreateSerializer(serializers.Serializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
@@ -69,6 +83,16 @@ class CommentsCreateSerializer(serializers.Serializer):
         model = GoalComment
         fields = "__all__"
         read_only_fields = ("id", "created", "updated", "user")
+
+    def validate_goal(self, value):
+        if not BoardParticipant.objects.filter(
+                board_id=value.board_id,
+                role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
+                user=self.context["request"].user,
+        ).exists():
+            raise serializers.ValidationError("must be owner or writer in project")
+        return value
+
 
 
 class CommentsSerializer(serializers.Serializer):
