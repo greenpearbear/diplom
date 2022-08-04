@@ -17,8 +17,7 @@ services:
     volumes:
       - .docker_env:/app/.env
   bot:
-    build:
-      context: .
+    image: greenpearbear/diplom-skypro:$GITHUB_REF_NAME-$GITHUB_RUN_ID
     depends_on:
       postgres:
         condition: service_healthy
