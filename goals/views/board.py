@@ -10,13 +10,13 @@ from goals.serializers import BoardCreateSerializer, BoardSerializer, BoardListS
 
 class BoardCreateView(CreateAPIView):
     model = Board
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [BoardPermissions]
     serializer_class = BoardCreateSerializer
 
 
 class BoardView(RetrieveUpdateDestroyAPIView):
     model = Board
-    permission_classes = [permissions.IsAuthenticated, BoardPermissions]
+    permission_classes = [BoardPermissions]
     serializer_class = BoardSerializer
 
     def get_queryset(self):
@@ -35,7 +35,7 @@ class BoardView(RetrieveUpdateDestroyAPIView):
 
 class BoardListView(ListAPIView):
     model = Board
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [BoardPermissions]
     pagination_class = LimitOffsetPagination
     serializer_class = BoardListSerializer
     filter_backends = [
