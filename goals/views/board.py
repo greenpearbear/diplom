@@ -1,9 +1,9 @@
 from django.db import transaction
-from rest_framework import permissions, filters
+from rest_framework import filters
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, ListAPIView
 from rest_framework.pagination import LimitOffsetPagination
 
-from goals.models import Board, Goal
+from goals.models import Board
 from goals.permission import BoardPermissions
 from goals.serializers import BoardCreateSerializer, BoardSerializer, BoardListSerializer
 
@@ -27,9 +27,7 @@ class BoardView(RetrieveUpdateDestroyAPIView):
             instance.is_deleted = True
             instance.save()
             instance.categories.update(is_deleted=True)
-            Goal.objects.filter(category__board=instance).update(
-                status=Goal.STATUS.archived
-            )
+
         return instance
 
 

@@ -39,6 +39,6 @@ class GoalView(RetrieveUpdateDestroyAPIView):
         return Goal.objects.filter(category__board__participants__user=self.request.user, category__is_deleted=False)
 
     def perform_destroy(self, instance):
-        instance.status = 'archive'
+        instance.status = Goal.Status.archived
         instance.save()
         return instance

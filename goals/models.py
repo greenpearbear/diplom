@@ -77,26 +77,24 @@ class Goal(DateModelMixin):
         verbose_name = "Цель"
         verbose_name_plural = "Цели"
 
-    STATUS = [
-        ("1", "К выполнению"),
-        ("2", "В работе"),
-        ("3", "Выполнено"),
-        ('4', "Архив")
-    ]
+    class Status(models.IntegerChoices):
+        to_do = 1, "К выполнению"
+        in_progress = 2, "В процессе"
+        done = 3, "Выполнено"
+        archived = 4, "Архив"
 
-    PRIORITY = [
-        ("1", "Низкий"),
-        ("2", "Средний"),
-        ("3", "Высокий"),
-        ('4', "Критический")
-    ]
+    class Priority(models.IntegerChoices):
+        low = 1, "Низкий"
+        medium = 2, "Средний"
+        high = 3, "Высокий"
+        critical = 4, "Критический"
 
     user = models.ForeignKey(User, verbose_name="Автор", on_delete=models.PROTECT)
     category = models.ForeignKey(GoalCategory, verbose_name='Категория', on_delete=models.PROTECT)
     title = models.CharField(verbose_name="Название", max_length=255)
     description = models.CharField(verbose_name='Описание', max_length=1023)
-    status = models.CharField(max_length=1, choices=STATUS, default='execution')
-    priority = models.CharField(max_length=1, choices=PRIORITY, default='middle')
+    status = models.PositiveSmallIntegerField(choices=Status.choices, default=Status.to_do)
+    priority = models.PositiveSmallIntegerField(choices=Priority.choices, default=Priority.medium)
     due_date = models.DateField()
 
 

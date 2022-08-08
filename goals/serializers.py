@@ -76,7 +76,7 @@ class GoalSerializer(serializers.ModelSerializer):
         return value
 
 
-class CommentsCreateSerializer(serializers.Serializer):
+class CommentsCreateSerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
@@ -86,7 +86,7 @@ class CommentsCreateSerializer(serializers.Serializer):
 
     def validate_goal(self, value):
         if not BoardParticipant.objects.filter(
-                board_id=value.board_id,
+                board_id=value.category.board_id,
                 role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
                 user=self.context["request"].user,
         ).exists():
@@ -94,8 +94,7 @@ class CommentsCreateSerializer(serializers.Serializer):
         return value
 
 
-
-class CommentsSerializer(serializers.Serializer):
+class CommentsSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
 
     class Meta:

@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, filters
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.pagination import LimitOffsetPagination
@@ -18,7 +19,7 @@ class GoalCategoryListView(ListAPIView):
     permission_classes = [GoalCategoryPermissions]
     serializer_class = GoalCategorySerializer
     pagination_class = LimitOffsetPagination
-    filter_backends = [filters.OrderingFilter, filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
     filterset_fields = ["board", "user"]
     ordering_fields = ["title", "created"]
     ordering = ["title"]
@@ -39,5 +40,5 @@ class GoalCategoryView(RetrieveUpdateDestroyAPIView):
     def perform_destroy(self, instance):
         instance.is_deleted = True
         instance.save()
-        Goal.objects.filter(category=instance).update(status=Goal.STATUS.archived)
+        Goal.objects.filter(category=instance).update(status=Goal.Status.archived)
         return instance
