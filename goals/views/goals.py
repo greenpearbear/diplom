@@ -22,7 +22,7 @@ class GoalListView(ListAPIView):
     pagination_class = LimitOffsetPagination
     filterset_class = GoalDateFilter
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
-    ordering_fields = ["priority", "due_date,"]
+    ordering_fields = ["priority", "due_date"]
     ordering = ["priority"]
     search_fields = ["title", "description"]
 

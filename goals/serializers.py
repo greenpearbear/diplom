@@ -4,6 +4,7 @@ from rest_framework import serializers
 from core.models import User
 from core.serializers import UserSerializer
 from goals.models import GoalCategory, Goal, GoalComment, Board, BoardParticipant
+from goals.validators import check_date_deadline
 
 
 class GoalCategorySerializer(serializers.ModelSerializer):
@@ -39,6 +40,7 @@ class GoalCategoryCreateSerializer(serializers.ModelSerializer):
 class GoalCreateSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(queryset=GoalCategory.objects.all())
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    due_date = serializers.DateField(validators=[check_date_deadline])
 
     class Meta:
         model = Goal
