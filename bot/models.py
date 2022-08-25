@@ -2,17 +2,26 @@ import random
 
 from django.db import models
 
-from core.models import User
-
 CODE_VOCABULARY = "jvnsdv438hv7ewrjoij3fijwue"
 
 
 class TgUser(models.Model):
-    telegram_chat_id = models.BigIntegerField()
-    telegram_user_ud = models.BigIntegerField()
-    username = models.CharField(max_length=512)
-    user = models.ForeignKey(User, on_delete=models.PROTECT, null=True)
-    verification_code = models.CharField(max_length=32)
+    tg_id = models.BigIntegerField(verbose_name="tg id", unique=True)
+    tg_chat_id = models.BigIntegerField(verbose_name="tg chat id")
+    username = models.CharField(
+        max_length=512, verbose_name="tg username", null=True, blank=True, default=None
+    )
+    user = models.ForeignKey(
+        "core.User",
+        models.PROTECT,
+        null=True,
+        blank=True,
+        default=None,
+        verbose_name="связанный пользователь",
+    )
+    verification_code = models.CharField(
+        max_length=32, verbose_name="код подтверждения"
+    )
 
     class Meta:
         verbose_name = "tg пользователь"
