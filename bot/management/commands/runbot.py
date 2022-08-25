@@ -4,7 +4,7 @@ from django.core.management import BaseCommand
 from bot.models import TgUser
 from bot.tg.client import TgClient
 from bot.tg.dc import Message
-from goals.models import Goal
+from goals.models import Goal, GoalCategory
 
 
 class Command(BaseCommand):
@@ -29,11 +29,25 @@ class Command(BaseCommand):
         else:
             self.tg_client.send_message(msg.chat.id, "[goals list is empty]")
 
+    def create_goal(self, msg: Message, tg_user: TgUser):
+        categories = GoalCategory.objects.filter(user=tg_user.user)
+        if categories.count() > 0:
+            resp_msg = [f"#{item.id} {item.title}" for item in categories]
+            self.tg_client.send_message(msg.chat.id, "\n".join(resp_msg))
+            response = self.tg_client.get_updates().result
+            for item in response:
+                p = item.message.text
+                self.tg_client.send_message(msg.chat.id, f"{p}")
+        else:
+            self.tg_client.send_message(msg.chat.id, "[categories list is empty]")
+
     def handle_verified_user(self, msg: Message, tg_user: TgUser):
         if not msg.text:
             return
         if "/goals" in msg.text:
             self.fetch_tasks(msg, tg_user)
+        if "/create" in msg.text:
+            self.create_goal(msg, tg_user)
         else:
             self.tg_client.send_message(msg.chat.id, "[unknown command]")
 
