@@ -34,12 +34,12 @@ class Command(BaseCommand):
         if categories.count() > 0:
             resp_msg = [f"#{item.id} {item.title}" for item in categories]
             self.tg_client.send_message(msg.chat.id, "\n".join(resp_msg))
-            response = self.tg_client.get_updates().result
-            for item in response:
-                p = item.message.text
-                self.tg_client.send_message(msg.chat.id, f"{p}")
         else:
             self.tg_client.send_message(msg.chat.id, "[categories list is empty]")
+        response = self.tg_client.get_updates().result
+        for item in response:
+            p = item.message.text
+            self.tg_client.send_message(msg.chat.id, f"{p}")
 
     def handle_verified_user(self, msg: Message, tg_user: TgUser):
         if not msg.text:
