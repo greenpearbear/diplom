@@ -36,27 +36,27 @@ class Command(BaseCommand):
         if categories.count() > 0:
             resp_msg = [f"#{item.id} {item.title}" for item in categories]
             self.tg_client.send_message(msg.chat.id, "\n".join(resp_msg))
+            response_categories = self.tg_client.get_updates(offset=self.offset, timeout=60)
+            for item in response_categories.result:
+                categories_response = item.message.text
+            for item in categories:
+                data.append(item.title)
+            if "/cancel" in categories_response:
+                self.tg_client.send_message(msg.chat.id, 'Отмена создания цели')
+            elif categories_response in data:
+                self.tg_client.send_message(msg.chat.id, "Введите заголовок цели")
+                response_goal = self.tg_client.get_updates(offset=self.offset + 1, timeout=60)
+                for item in response_goal.result:
+                    goal_response = item.message.text
+                if "/cancel" in goal_response:
+                    self.tg_client.send_message(msg.chat.id, 'Отмена создания цели')
+                else:
+                    self.tg_client.send_message(msg.chat.id,
+                                                f"Категория - {categories_response} Цель - {goal_response}")
+            else:
+                self.tg_client.send_message(msg.chat.id, "Такой категории нет, введите заново")
         else:
             self.tg_client.send_message(msg.chat.id, "[categories list is empty]")
-        response_categories = self.tg_client.get_updates(offset=self.offset, timeout=60)
-        for item in response_categories.result:
-            categories_response = item.message.text
-        for item in categories:
-            data.append(item.title)
-        if "/cancel" in categories_response:
-            self.tg_client.send_message(msg.chat.id, 'Отмена создания цели')
-        elif categories_response in data:
-            self.tg_client.send_message(msg.chat.id, "Введите заголовок цели")
-            response_goal = self.tg_client.get_updates(offset=self.offset+1, timeout=60)
-            for item in response_goal.result:
-                goal_response = item.message.text
-            if "/cancel" in goal_response:
-                self.tg_client.send_message(msg.chat.id, 'Отмена создания цели')
-            else:
-                self.tg_client.send_message(msg.chat.id, f"Категория - {categories_response} Цель - {goal_response}")
-        else:
-            self.tg_client.send_message(msg.chat.id, "Такой категории нет, введите заново")
-            self.create_goal(msg, tg_user)
 
     def handle_verified_user(self, msg: Message, tg_user: TgUser):
         if not msg.text:
