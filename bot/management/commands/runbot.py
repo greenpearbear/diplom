@@ -66,10 +66,10 @@ class Command(BaseCommand):
     def handle_verified_user(self, msg: Message, tg_user: TgUser):
         if not msg.text:
             return
-        if "/goals" in msg.text:
+        elif "/goals" in msg.text:
             self.fetch_tasks(msg, tg_user)
             return
-        if "/create" in msg.text:
+        elif "/create" in msg.text:
             self.create_goal(msg, tg_user)
             return
         else:
