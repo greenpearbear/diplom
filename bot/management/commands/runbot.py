@@ -27,6 +27,7 @@ class Command(BaseCommand):
         if gls.count() > 0:
             resp_msg = [f"#{item.id} {item.title}" for item in gls]
             self.tg_client.send_message(msg.chat.id, "\n".join(resp_msg))
+            return
         else:
             self.tg_client.send_message(msg.chat.id, "[goals list is empty]")
 
@@ -43,6 +44,7 @@ class Command(BaseCommand):
                 data.append(item.title)
             if "/cancel" in categories_response:
                 self.tg_client.send_message(msg.chat.id, 'Отмена создания цели')
+                return
             elif categories_response in data:
                 self.tg_client.send_message(msg.chat.id, "Введите заголовок цели")
                 response_goal = self.tg_client.get_updates(offset=self.offset + 1, timeout=60)
@@ -50,6 +52,7 @@ class Command(BaseCommand):
                     goal_response = item.message.text
                 if "/cancel" in goal_response:
                     self.tg_client.send_message(msg.chat.id, 'Отмена создания цели')
+                    return
                 else:
                     self.tg_client.send_message(msg.chat.id,
                                                 f"Категория - {categories_response} Цель - {goal_response}")
