@@ -52,7 +52,8 @@ class Command(BaseCommand):
                 goal_response = item.message.text
             if "/cancel" in goal_response:
                 self.tg_client.send_message(msg.chat.id, 'Отмена создания цели')
-            self.tg_client.send_message(msg.chat.id, f"Категория - {categories_response} Цель - {goal_response}")
+            else:
+                self.tg_client.send_message(msg.chat.id, f"Категория - {categories_response} Цель - {goal_response}")
         else:
             self.tg_client.send_message(msg.chat.id, "Такой категории нет, введите заново")
             self.create_goal(msg, tg_user)
@@ -60,9 +61,9 @@ class Command(BaseCommand):
     def handle_verified_user(self, msg: Message, tg_user: TgUser):
         if not msg.text:
             return
-        elif "/goals" in msg.text:
+        if "/goals" in msg.text:
             self.fetch_tasks(msg, tg_user)
-        elif "/create" in msg.text:
+        if "/create" in msg.text:
             self.create_goal(msg, tg_user)
         else:
             self.tg_client.send_message(msg.chat.id, "[unknown command]")
