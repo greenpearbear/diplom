@@ -31,15 +31,20 @@ class Command(BaseCommand):
             self.tg_client.send_message(msg.chat.id, "[goals list is empty]")
 
     def create_goal(self, msg: Message, tg_user: TgUser):
+        data = []
         categories = GoalCategory.objects.filter(user=tg_user.user)
         if categories.count() > 0:
             resp_msg = [f"#{item.id} {item.title}" for item in categories]
             self.tg_client.send_message(msg.chat.id, "\n".join(resp_msg))
         else:
             self.tg_client.send_message(msg.chat.id, "[categories list is empty]")
-        response = self.tg_client.get_updates(offset=self.offset, timeout=60).result
-        for item in response:
-            self.tg_client.send_message(msg.chat.id, f"{item.message}")
+        while True:
+            response = self.tg_client.get_updates(offset=self.offset, timeout=60)
+            for item in response.result:
+                categories_response = item.message.text
+            for item in categories:
+                data.append(item.title)
+            self.tg_client.send_message(msg.chat.id, f"{categories_response}")
 
     def handle_verified_user(self, msg: Message, tg_user: TgUser):
         if not msg.text:
