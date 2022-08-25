@@ -18,4 +18,4 @@ https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-o
 
 4)После этого вам необходимо в терминале ввести команду docker-compose up --build.
 
-5)Вы восхитительны!!!
+5)Вы восхитительны!!!!
