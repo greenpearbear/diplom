@@ -9,6 +9,7 @@ from goals.models import Goal, GoalCategory
 
 class Command(BaseCommand):
     help = "run bot"
+    offset = 0
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -36,7 +37,7 @@ class Command(BaseCommand):
             self.tg_client.send_message(msg.chat.id, "\n".join(resp_msg))
         else:
             self.tg_client.send_message(msg.chat.id, "[categories list is empty]")
-        response = self.tg_client.get_updates(offset=1, timeout=60).result
+        response = self.tg_client.get_updates(offset=self.offset, timeout=60).result
         for item in response:
             self.tg_client.send_message(msg.chat.id, f"{item.message}")
 
@@ -67,10 +68,8 @@ class Command(BaseCommand):
             self.handle_user_without_verification(msg, tg_user)
 
     def handle(self, *args, **kwargs):
-        offset = 0
-
         while True:
-            res = self.tg_client.get_updates(offset=offset)
+            res = self.tg_client.get_updates(offset=self.offset)
             for item in res.result:
-                offset = item.update_id + 1
+                self.offset = item.update_id + 1
                 self.handle_message(item.message)
