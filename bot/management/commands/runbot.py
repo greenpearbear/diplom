@@ -47,7 +47,7 @@ class Command(BaseCommand):
             return
         elif categories_response in data:
             self.tg_client.send_message(msg.chat.id, "Введите заголовок цели")
-            response_goal = self.tg_client.get_updates(offset=self.offset, timeout=60)
+            response_goal = self.tg_client.get_updates(offset=self.offset+1, timeout=60)
             for item in response_goal.result:
                 goal_response = item.message.text
             if "/cancel" in goal_response:
