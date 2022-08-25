@@ -69,9 +69,9 @@ class Command(BaseCommand):
         elif "/goals" in msg.text:
             self.fetch_tasks(msg, tg_user)
             return
-        elif "/create" in msg.text:
-            self.create_goal(msg, tg_user)
-            return
+        # elif "/create" in msg.text:
+        #     self.create_goal(msg, tg_user)
+        #     return
         else:
             self.tg_client.send_message(msg.chat.id, "[unknown command]")
 
