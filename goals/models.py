@@ -92,10 +92,10 @@ class Goal(DateModelMixin):
     user = models.ForeignKey(User, verbose_name="Автор", on_delete=models.PROTECT)
     category = models.ForeignKey(GoalCategory, verbose_name='Категория', on_delete=models.PROTECT)
     title = models.CharField(verbose_name="Название", max_length=255)
-    description = models.CharField(verbose_name='Описание', max_length=1023)
+    description = models.CharField(verbose_name='Описание', max_length=1023, null=True, blank=True)
     status = models.PositiveSmallIntegerField(choices=Status.choices, default=Status.to_do)
     priority = models.PositiveSmallIntegerField(choices=Priority.choices, default=Priority.medium)
-    due_date = models.DateField()
+    due_date = models.DateField(null=True, blank=True)
 
 
 class GoalComment(DateModelMixin):
