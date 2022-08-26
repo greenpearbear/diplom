@@ -36,8 +36,6 @@ class Command(BaseCommand):
             self.list_category_goal.append(data)
         if len(self.list_category_goal) == 1:
             self.list_category_goal.append(data)
-        if len(self.list_category_goal) > 2:
-            self.list_category_goal = []
 
     def create_goal(self, msg: Message, tg_user: TgUser):
         data = []
@@ -69,6 +67,7 @@ class Command(BaseCommand):
                     new_goal = Goal.objects.create(category=self.list_category_goal[0],
                                                    title=self.list_category_goal[1])
                     new_goal.save()
+                    self.list_category_goal = []
                     return
             else:
                 self.tg_client.send_message(msg.chat.id, "Такой категории нет, введите заново")
@@ -87,7 +86,7 @@ class Command(BaseCommand):
             self.create_goal(msg, tg_user)
             return
         if not self.list_category_goal:
-            self.save_goal(1)
+            return
         else:
             self.tg_client.send_message(msg.chat.id, "[unknown command]")
             return
