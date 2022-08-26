@@ -30,54 +30,46 @@ class Command(BaseCommand):
         else:
             self.tg_client.send_message(msg.chat.id, "[goals list is empty]")
 
-    def create_goal(self, msg: Message, tg_user: TgUser):
-        data = []
+    def fetch_task(self, msg: Message, tg_user: TgUser):
+        data_category = []
         categories = GoalCategory.objects.filter(user=tg_user.user)
         if categories.count() > 0:
             resp_msg = [f"#{item.id} {item.title}" for item in categories]
             self.tg_client.send_message(msg.chat.id, "\n".join(resp_msg))
-            response_categories = self.tg_client.get_updates(offset=self.offset, timeout=60)
-            for item in response_categories.result:
-                categories_response = item.message.text
             for item in categories:
-                data.append(item.title)
-            if "/cancel" in categories_response:
-                self.tg_client.send_message(msg.chat.id, 'Отмена создания цели')
-                return
-            elif categories_response in data:
-                self.tg_client.send_message(msg.chat.id, "Введите заголовок цели")
-                response_goal = self.tg_client.get_updates(offset=self.offset + 1, timeout=60)
-                for item in response_goal.result:
-                    goal_response = item.message.text
-                if "/cancel" in goal_response:
-                    self.tg_client.send_message(msg.chat.id, 'Отмена создания цели')
-                    return
-                else:
-                    self.tg_client.send_message(msg.chat.id,
-                                                f"Категория - {categories_response} Цель - {goal_response}")
-                    Goal.objects.create(category=categories_response, title=goal_response, user=tg_user.user)
-                    return
-            else:
-                self.tg_client.send_message(msg.chat.id, "Такой категории нет, введите заново")
-                return
+                data_category.append(item.title)
+            self.create_task(msg, tg_user, data_category)
         else:
             self.tg_client.send_message(msg.chat.id, "[categories list is empty]")
-            return
+
+    def create_task(self, msg: Message, tg_user: TgUser, data_category):
+        # response_categories = self.tg_client.get_updates(offset=self.offset, timeout=60)
+        categories_response = msg.text
+        if "/cancel" in categories_response:
+            self.tg_client.send_message(msg.chat.id, 'Отмена создания цели')
+        elif categories_response in data_category:
+            self.tg_client.send_message(msg.chat.id, "Введите заголовок цели")
+            response_goal = self.tg_client.get_updates(offset=self.offset + 1, timeout=60)
+            for item in response_goal.result:
+                goal_response = item.message.text
+            if "/cancel" in goal_response:
+                self.tg_client.send_message(msg.chat.id, 'Отмена создания цели')
+            else:
+                self.tg_client.send_message(msg.chat.id,
+                                            f"Категория - {categories_response} Цель - {goal_response}")
+                Goal.objects.create(category=categories_response, title=goal_response, user=tg_user.user)
+        else:
+            self.tg_client.send_message(msg.chat.id, "Такой категории нет, введите заново")
 
     def handle_verified_user(self, msg: Message, tg_user: TgUser):
         if not msg.text:
             return
         elif "/goals" in msg.text:
             self.fetch_tasks(msg, tg_user)
-            return
         elif "/create" in msg.text:
-            self.create_goal(msg, tg_user)
-            return
-        elif not self.list_category_goal:
-            return
+            self.fetch_task(msg, tg_user)
         else:
             self.tg_client.send_message(msg.chat.id, "[unknown command]")
-            return
 
     def handle_message(self, msg: Message):
         tg_user, created = TgUser.objects.get_or_create(
