@@ -10,7 +10,6 @@ from goals.models import Goal, GoalCategory
 class Command(BaseCommand):
     help = "run bot"
     offset = 0
-    list_category_goal = []
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -30,12 +29,6 @@ class Command(BaseCommand):
             self.tg_client.send_message(msg.chat.id, "\n".join(resp_msg))
         else:
             self.tg_client.send_message(msg.chat.id, "[goals list is empty]")
-
-    def save_goal(self, data):
-        if len(self.list_category_goal) == 0:
-            self.list_category_goal.append(data)
-        if len(self.list_category_goal) == 1:
-            self.list_category_goal.append(data)
 
     def create_goal(self, msg: Message, tg_user: TgUser):
         data = []
@@ -62,12 +55,7 @@ class Command(BaseCommand):
                 else:
                     self.tg_client.send_message(msg.chat.id,
                                                 f"Категория - {categories_response} Цель - {goal_response}")
-                    self.save_goal(categories_response)
-                    self.save_goal(goal_response)
-                    new_goal = Goal.objects.create(category=self.list_category_goal[0],
-                                                   title=self.list_category_goal[1])
-                    new_goal.save()
-                    self.list_category_goal = []
+                    Goal.objects.create(category=categories_response, title=goal_response, user=tg_user.user)
                     return
             else:
                 self.tg_client.send_message(msg.chat.id, "Такой категории нет, введите заново")
@@ -85,7 +73,7 @@ class Command(BaseCommand):
         elif "/create" in msg.text:
             self.create_goal(msg, tg_user)
             return
-        if not self.list_category_goal:
+        elif not self.list_category_goal:
             return
         else:
             self.tg_client.send_message(msg.chat.id, "[unknown command]")
