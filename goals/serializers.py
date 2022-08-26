@@ -40,7 +40,7 @@ class GoalCategoryCreateSerializer(serializers.ModelSerializer):
 class GoalCreateSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(queryset=GoalCategory.objects.all())
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    due_date = serializers.DateField(validators=[check_date_deadline])
+    # due_date = serializers.DateField(validators=[check_date_deadline])
 
     class Meta:
         model = Goal

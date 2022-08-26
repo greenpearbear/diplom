@@ -95,7 +95,7 @@ class Goal(DateModelMixin):
     description = models.CharField(verbose_name='Описание', max_length=1023, null=True, blank=True)
     status = models.PositiveSmallIntegerField(choices=Status.choices, default=Status.to_do)
     priority = models.PositiveSmallIntegerField(choices=Priority.choices, default=Priority.medium)
-    due_date = models.DateField(null=True, blank=True)
+    due_date = models.DateField(null=True, blank=True, default=None)
 
 
 class GoalComment(DateModelMixin):
