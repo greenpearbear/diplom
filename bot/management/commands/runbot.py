@@ -43,11 +43,12 @@ class Command(BaseCommand):
             self.tg_client.send_message(msg.chat.id, "[categories list is empty]")
 
     def create_task(self, msg: Message, tg_user: TgUser, data_category):
-        # response_categories = self.tg_client.get_updates(offset=self.offset, timeout=60)
-        categories_response = msg.text
+        response_categories = self.tg_client.get_updates(offset=self.offset, timeout=60)
+        for item_categories in response_categories.result:
+            categories_response = item_categories.message.text
         if "/cancel" in categories_response:
             self.tg_client.send_message(msg.chat.id, 'Отмена создания цели')
-        elif categories_response in data_category:
+        if categories_response in data_category:
             self.tg_client.send_message(msg.chat.id, "Введите заголовок цели")
             response_goal = self.tg_client.get_updates(offset=self.offset + 1, timeout=60)
             for item in response_goal.result:
