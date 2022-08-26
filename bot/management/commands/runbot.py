@@ -31,6 +31,12 @@ class Command(BaseCommand):
         else:
             self.tg_client.send_message(msg.chat.id, "[goals list is empty]")
 
+    def save_goal(self, data):
+        if len(self.list_category_goal) == 0:
+            self.list_category_goal.append(data)
+        if len(self.list_category_goal) == 1:
+            self.list_category_goal.append(data)
+
     def create_goal(self, msg: Message, tg_user: TgUser):
         data = []
         categories = GoalCategory.objects.filter(user=tg_user.user)
@@ -47,7 +53,7 @@ class Command(BaseCommand):
                 return
             elif categories_response in data:
                 self.tg_client.send_message(msg.chat.id, "Введите заголовок цели")
-                response_goal = self.tg_client.get_updates(offset=self.offset, timeout=60)
+                response_goal = self.tg_client.get_updates(offset=self.offset + 1, timeout=60)
                 for item in response_goal.result:
                     goal_response = item.message.text
                 if "/cancel" in goal_response:
@@ -56,6 +62,9 @@ class Command(BaseCommand):
                 else:
                     self.tg_client.send_message(msg.chat.id,
                                                 f"Категория - {categories_response} Цель - {goal_response}")
+                    self.save_goal(categories_response)
+                    self.save_goal(goal_response)
+                    Goal.objects.create(category=self.list_category_goal[0], title=self.list_category_goal[1])
                     return
             else:
                 self.tg_client.send_message(msg.chat.id, "Такой категории нет, введите заново")
@@ -73,6 +82,8 @@ class Command(BaseCommand):
         elif "/create" in msg.text:
             self.create_goal(msg, tg_user)
             return
+        if not self.list_category_goal:
+            self.save_goal(1)
         else:
             self.tg_client.send_message(msg.chat.id, "[unknown command]")
             return
